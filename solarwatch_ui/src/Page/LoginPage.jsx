@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import { useState, useContext } from 'react';
+import "./LoginPage.css";
 import LoginForm from '../Component/LoginForm';
 import { useNavigate } from 'react-router-dom';
+import { userContext } from '../Contexts/UserContext';
+import Loading from '../Component/Loading';
 
 const LoginUser = (credentials) => {
   return fetch('https://localhost:7015/Auth/Login', {
@@ -22,11 +25,12 @@ const LoginUser = (credentials) => {
     });
 };
 
-export default function LoginPage({ isLoggedIn, setIsLoggedIn }) {
+export default function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [showLoginMessage, setShowLoginMessage] = useState(false);
+  const {isLoggedIn, setIsLoggedIn} = useContext(userContext);
 
   const handleLogin = (credentials) => {
     setLoading(true);
@@ -34,13 +38,13 @@ export default function LoginPage({ isLoggedIn, setIsLoggedIn }) {
     LoginUser(credentials)
       .then((authenticationResponse) => {
         setUsername(authenticationResponse.username);
-        localStorage.setItem('jwtToken', `Bearer ${authenticationResponse.token}`);
+        localStorage.setItem('#36Tkn', `Bearer ${authenticationResponse.token}`);
         setShowLoginMessage(true);
         setIsLoggedIn(true);
         setTimeout(() => {
           setShowLoginMessage(false);
           navigate('/Solar-watch');
-        }, 3000);
+        }, 2000);
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -48,17 +52,17 @@ export default function LoginPage({ isLoggedIn, setIsLoggedIn }) {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('#36Tkn');
   };
 
   return (
     <div>
-      {loading && <p>Loading...</p>}
-      {showLoginMessage && <h3>Welcome, {username}</h3>}
+      {loading && <Loading />}
+      {showLoginMessage && <h3 id="welcome-login-text">Welcome, {username}</h3>}
       {isLoggedIn ? (
         <>
-          <h1>You are already logged in!</h1>
-          <button onClick={handleLogout}>Logout</button>
+          <h1 id="logged-in-text">You are logged in!</h1>
+          <button id="logout-button" onClick={handleLogout}>Logout</button>
         </>
       ) : (
         <LoginForm onSubmit={handleLogin} onCancel={() => navigate('/')} />

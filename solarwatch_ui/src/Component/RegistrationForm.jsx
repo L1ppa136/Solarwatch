@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import "./RegistrationForm.css";
 
 export default function RegistrationForm({ onSubmit, onCancel }) {
   const [email, setEmail] = useState('');
@@ -43,18 +44,19 @@ export default function RegistrationForm({ onSubmit, onCancel }) {
       <form className='RegistrationForm' onSubmit={handleSubmit}>
         <label>
           E-mail address:
-          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)}></input>
+          <input type='email' placeholder="example@example.com" value={email} onChange={(e) => setEmail(e.target.value)}></input>
         </label>
 
         <label>
           Username:
-          <input type='text' value={username} onChange={(e) => setUsername(e.target.value)}></input>
+          <input type='text' placeholder="Your username" value={username} onChange={(e) => setUsername(e.target.value)}></input>
         </label>
 
         <label>
           Password:
           <input
             type='password'
+            placeholder="Your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           ></input>
@@ -64,6 +66,7 @@ export default function RegistrationForm({ onSubmit, onCancel }) {
           Password again:
           <input
             type='password'
+            placeholder="Your password again"
             value={passwordSecond}
             onChange={(e) => setPasswordSecond(e.target.value)}
           ></input>

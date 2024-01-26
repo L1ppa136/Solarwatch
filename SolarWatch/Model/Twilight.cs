@@ -18,6 +18,8 @@ namespace SolarWatch.Model
         public string Sunrise { get; private set; }
         public string Sunset { get; private set; }
         public string SolarNoon { get; private set; }
+        [NotMapped]
+        public string? WeatherDescription { get; private set; }
 
         public Twilight(string sunrise, string sunset, string solarNoon)
         {
@@ -49,6 +51,11 @@ namespace SolarWatch.Model
             Sunrise = sunrise;
             Sunset = sunset;
             SolarNoon = solarNoon;
+        }
+
+        public void AddWeatherDescription(string description)
+        {
+            WeatherDescription = description;
         }
     }
 }

@@ -17,13 +17,15 @@ namespace SolarWatch.Controllers
         private readonly IGeocoder _geocoder;
         private readonly ITwilightDataFetcher _twilightDataFetcher;
         private readonly ICityRepository _cityRepository;
+        private readonly IWeatherDescriptionProvider _weatherDescriptionProvider;
 
-        public TwilightController(ILogger<TwilightController> logger, IGeocoder geocoder, ITwilightDataFetcher twilightDataFetcher, ICityRepository cityRepository)
+        public TwilightController(ILogger<TwilightController> logger, IGeocoder geocoder, ITwilightDataFetcher twilightDataFetcher, ICityRepository cityRepository, IWeatherDescriptionProvider weatherDescriptionProvider)
         {
             _logger = logger;
             _geocoder = geocoder;
             _twilightDataFetcher = twilightDataFetcher;
             _cityRepository = cityRepository;
+            _weatherDescriptionProvider = weatherDescriptionProvider;   
         }
 
         [HttpGet("Cities")]
@@ -54,18 +56,21 @@ namespace SolarWatch.Controllers
                     return BadRequest("Something went wrong - Invalid date format");
                 }
 
-                City? cityFromDB = await _cityRepository.GetCityByNameAsync(request.CityName, includeTwilights: true);
 
+                City? cityFromDB = await _cityRepository.GetCityByNameAsync(request.CityName, includeTwilights: true);
+                string? weatherDescription;
                 if (cityFromDB != null)
                 {
+                    geocode = new Geocode(cityFromDB.Latitude, cityFromDB.Longitude, cityFromDB.Country, cityFromDB.State);
                     twilightData = cityFromDB.GetTwilightByDate(newDate);
+                    weatherDescription = await _weatherDescriptionProvider.ProvideWeatherDescription(geocode);
 
                     if (twilightData != null)
                     {
+                        twilightData.AddWeatherDescription(weatherDescription);
                         return Ok(twilightData);
                     }
 
-                    geocode = new Geocode(cityFromDB.Latitude, cityFromDB.Longitude, cityFromDB.Country, cityFromDB.State);
                 }
                 else
                 {
@@ -82,6 +87,8 @@ namespace SolarWatch.Controllers
                 {
                     await NewCityAndTwilightToDBAsync(request.CityName, geocode, twilightData);
                 }
+                weatherDescription = await _weatherDescriptionProvider.ProvideWeatherDescription(geocode);
+                twilightData.AddWeatherDescription(weatherDescription);
 
                 return Ok(twilightData);
             }

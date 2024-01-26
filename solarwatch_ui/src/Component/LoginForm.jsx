@@ -19,14 +19,15 @@ export default function LoginForm({ onSubmit, onCancel }) {
     <div>
       <form className='LoginForm' onSubmit={handleLogin}>
         <label>
-          Email:
-          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)}></input>
+          E-mail address:
+          <input type='email' placeholder="Your e-mail" value={email} onChange={(e) => setEmail(e.target.value)}></input>
         </label>
 
         <label>
           Password:
           <input
             type='password'
+            placeholder="Your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           ></input>

@@ -12,10 +12,10 @@ namespace SolarWatch.Service
         private readonly ILogger<Geocoder> _logger;
         private readonly string _weatherApiKey;
 
-        public Geocoder(ILogger<Geocoder> logger, IConfiguration config)
+        public Geocoder(ILogger<Geocoder> logger, IConfiguration configuration)
         {
             _logger = logger;
-            _weatherApiKey = config["WeatherAPIKey"];
+            _weatherApiKey = configuration["WeatherAPIKey"];
         }
 
         public async Task<Geocode> GetGeoCodesAsync(string city)

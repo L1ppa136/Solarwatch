@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import "./SolarWatchPage.css";
+import { useEffect, useState, useContext } from 'react';
+import Loading from "../Component/Loading.jsx";
+import { userContext } from '../Contexts/UserContext.jsx';
 
 const getCitiesForAutoComplete = async () => {
   const response = await fetch(`https://localhost:7015/Twilight/Cities`);
@@ -6,14 +9,15 @@ const getCitiesForAutoComplete = async () => {
   return data;
 };
 
-export default function SolarWatchPage({ isLoggedIn }) {
+export default function SolarWatchPage() {
   const [cityName, setCityName] = useState('');
   const todaysDate = new Date();
   const formattedDate = todaysDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
   const [date, setDate] = useState(formattedDate);
-  const [twilightData, setTwilightData] = useState({});
+  const [twilightData, setTwilightData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [cityList, setCityList] = useState([]);
+  const {isLoggedIn} = useContext(userContext);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -31,7 +35,7 @@ export default function SolarWatchPage({ isLoggedIn }) {
       const response = await fetch('https://localhost:7015/Twilight/Solarwatch', {
         method: 'POST',
         headers: {
-          'Authorization': localStorage.getItem('jwtToken'),
+          'Authorization': localStorage.getItem('#36Tkn'),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
@@ -45,10 +49,10 @@ export default function SolarWatchPage({ isLoggedIn }) {
   };
 
   return (
-    <div>
+    <div className='TW-container'>
       {isLoggedIn ? (
         <>
-          <h1>Welcome to Solarwatch, type a city name and date(optional) to get twilight data!</h1>
+          <h3 className="T&W-header">Welcome to Twilight & Weather!<br/>Type a city name and date(optional) to get twilight data with the current weather description<sub>(*Powered by OpenAI)</sub>!</h3>
           <label>
             City:
             <input
@@ -67,18 +71,24 @@ export default function SolarWatchPage({ isLoggedIn }) {
             Date:
             <input type='date' value={date} onChange={(e) => setDate(e.target.value)}></input>
           </label>
-          <button onClick={() => getSolarWatchData(cityName)}>Get Twilight</button>
-          {twilightData && (
+          {/* Use isLoading state to conditionally render the Loading component */}
+          <button onClick={() => getSolarWatchData(cityName)}>
+            Fetch T&W
+          </button>
+          {loading && <Loading />}
+          {twilightData ? (
             <div className='TwilightUI'>
-              {loading && <p>Loading...</p>}
-              <p>Sunrise: {twilightData.sunrise}</p>
-              <p>Sunset: {twilightData.sunset}</p>
-              <p>Solarnoon: {twilightData.solarNoon}</p>
+              <br />
+              <h3>Sunrise:</h3><p>{twilightData.sunrise}</p>
+              <h3>Sunset:</h3><p>{twilightData.sunset}</p>
+              <h3>Solarnoon:</h3><p>{twilightData.solarNoon}</p><br />
+              <h3>Current weatherdescription:</h3><br />
+              <p>{twilightData.weatherDescription}</p>
             </div>
-          )}
+          ) : (<div>Fetched Data will be rendered here...</div>)}
         </>
       ) : (
-        <h1>You must be logged in to access this page!</h1>
+        <h1 className="T&W-header">You must be logged in to access this feature!</h1>
       )}
     </div>
   );

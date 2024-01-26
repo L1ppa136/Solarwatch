@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SolarWatch.Contracts;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 
 namespace SolarWatch.Service.Authentication
 {
@@ -67,6 +69,40 @@ namespace SolarWatch.Service.Authentication
                 authenticationResult.ErrorMessages.Add(error.Code, error.Description);
             }
             return authenticationResult;
+        }
+
+        public async Task<AuthenticationResult> CheckTokenValidityAsync(string tokenAsString)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(tokenAsString);
+            var decodedJwtToken = jsonToken as JwtSecurityToken;
+
+            if(decodedJwtToken == null)
+            {
+                var result = new AuthenticationResult(false, "", "", tokenAsString);
+                result.ErrorMessages.Add("Invalid token!", "Invlaid token format!");
+                return result;
+            }
+
+            var emailClaim = decodedJwtToken?.Claims.First(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+            var expiryClaim = decodedJwtToken?.Claims.First(claim => claim.Type == "exp").Value;
+            
+            IdentityUser? userWithToken = await _userManager.FindByEmailAsync(emailClaim);
+
+            if(userWithToken == null)
+            {
+                var result = new AuthenticationResult(false, "", "", tokenAsString);
+                result.ErrorMessages.Add("Invalid token!", "User not found!");
+                return result;
+            }
+            if (expiryClaim == null || !long.TryParse(expiryClaim, out var expirationTime) || DateTimeOffset.FromUnixTimeSeconds(expirationTime) < DateTimeOffset.UtcNow)
+            {
+                var result = new AuthenticationResult(false, userWithToken.Email, userWithToken.UserName, tokenAsString);
+                result.ErrorMessages.Add("Invalid token!", "Token expired, new login required!");
+                return result;
+            }
+
+            return new AuthenticationResult(true, userWithToken.Email, userWithToken.UserName, tokenAsString);
         }
     }
 }

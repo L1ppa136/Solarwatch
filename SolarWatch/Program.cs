@@ -52,7 +52,10 @@ public class Program
             using (var scope = app.Services.CreateScope())
             {
                 var solarwatchDataContext = scope.ServiceProvider.GetRequiredService<SolarwatchDbContext>();
-                solarwatchDataContext.Database.Migrate();
+                solarwatchDataContext.Database.EnsureCreated();
+
+                var usersDataContext = scope.ServiceProvider.GetRequiredService<UsersContext>();
+                usersDataContext.Database.EnsureCreated();
             }
         }
 
@@ -108,8 +111,9 @@ public class Program
             builder.Services.AddSingleton<IGeocoder, Geocoder>();
             builder.Services.AddSingleton<ITwilightDataFetcher, TwilightDataFetcher>();
             builder.Services.AddScoped<ICityRepository, CityRepository>();
-            builder.Services.AddScoped<SolarWatch.Service.Authentication.IAuthenticationService, SolarWatch.Service.Authentication.AuthenticationService>();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<ITokenService,TokenService>();
+            builder.Services.AddScoped<IWeatherDescriptionProvider, WeatherDescriptionProvider>();
         }
 
         void AddAuthentication(IConfiguration configuration)

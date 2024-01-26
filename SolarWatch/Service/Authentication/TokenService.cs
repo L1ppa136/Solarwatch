@@ -10,6 +10,12 @@ namespace SolarWatch.Service.Authentication
     public class TokenService : ITokenService
     {
         private const int ExpirationMinutes = 30;
+        private IConfiguration _configuration;
+
+        public TokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public string CreateToken(IdentityUser user, string role)
         {
             var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
@@ -50,7 +56,7 @@ namespace SolarWatch.Service.Authentication
 
         private SigningCredentials CreateSigningCredentials()
         {
-            return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SolarwatchSecret")), SecurityAlgorithms.HmacSha256);
+            return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["IssuerSigningKey"])), SecurityAlgorithms.HmacSha256);
         }
     }
 }

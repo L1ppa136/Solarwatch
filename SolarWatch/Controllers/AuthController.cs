@@ -51,6 +51,19 @@ namespace SolarWatch.Controllers
             return Ok(new AuthenticationResponse(result.Email, result.UserName, result.Token));
         }
 
+        [HttpPost("CheckTokenIfValid")]
+        public async Task<ActionResult<AuthenticationResponse>> ValidateToken([FromBody]string tokenAsString)
+        {
+            var result = await _authenticationService.CheckTokenValidityAsync(tokenAsString);
+            if (!result.Success)
+            {
+                AddErrors(result);
+                return BadRequest(ModelState);
+            }
+
+            return Ok(new AuthenticationResponse(result.Email, result.UserName, result.Token));
+        }
+
         private void AddErrors(AuthenticationResult result)
         {
             foreach(var error in result.ErrorMessages)
