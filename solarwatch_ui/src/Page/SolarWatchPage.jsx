@@ -24,8 +24,9 @@ export default function SolarWatchPage() {
       const cities = await getCitiesForAutoComplete();
       setCityList(cities);
     };
-
-    fetchCities();
+    
+    
+    fetchCities();      
   }, []);
 
   const getSolarWatchData = async (cityName) => {
@@ -52,7 +53,7 @@ export default function SolarWatchPage() {
     <div className='TW-container'>
       {isLoggedIn ? (
         <>
-          <h3 className="T&W-header">Welcome to Twilight & Weather!<br/>Type a city name and date(optional) to get twilight data with the current weather description<sub>(*Powered by OpenAI)</sub>!</h3>
+          <h3 className="T&W-header">Type a city name and date(optional) to get twilight data with the current weather description!</h3>
           <label>
             City:
             <input
@@ -69,7 +70,7 @@ export default function SolarWatchPage() {
           </label>
           <label>
             Date:
-            <input type='date' value={date} onChange={(e) => setDate(e.target.value)}></input>
+            <input className="react-datepicker" type='date' value={date} onChange={(e) => setDate(e.target.value)}></input>
           </label>
           {/* Use isLoading state to conditionally render the Loading component */}
           <button onClick={() => getSolarWatchData(cityName)}>
@@ -77,13 +78,12 @@ export default function SolarWatchPage() {
           </button>
           {loading && <Loading />}
           {twilightData ? (
-            <div className='TwilightUI'>
-              <br />
-              <h3>Sunrise:</h3><p>{twilightData.sunrise}</p>
-              <h3>Sunset:</h3><p>{twilightData.sunset}</p>
-              <h3>Solarnoon:</h3><p>{twilightData.solarNoon}</p><br />
-              <h3>Current weatherdescription:</h3><br />
-              <p>{twilightData.weatherDescription}</p>
+            <div id='TwilightUI'>
+              <h2>Sunrise:</h2><p>{twilightData.sunrise}</p>
+              <h2>Sunset:</h2><p>{twilightData.sunset}</p>
+              <h2>Solarnoon:</h2><p>{twilightData.solarNoon}</p>
+              <h2>Weather description (current):</h2>
+              <p id="description-text">{twilightData.weatherDescription}</p>
             </div>
           ) : (<div>Fetched Data will be rendered here...</div>)}
         </>

@@ -4,6 +4,7 @@ import RegistrationPage from './Page/RegistrationPage.jsx';
 import LoginPage from './Page/LoginPage.jsx';
 import SolarWatchPage from './Page/SolarWatchPage.jsx';
 import Layout from './Component/Layout.jsx';
+import HomePage from "./Page/HomePage.jsx";
 import { UserContextProvider } from './Contexts/UserContext.jsx';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<UserContextProvider/>}>
             <Route path="/" element={<Layout/>}>
+              <Route path='/' element={<HomePage />} />
               <Route path='/Registration' element={<RegistrationPage />} />
               <Route path='/Login' element={<LoginPage />} />
               <Route path='/Solar-watch' element={<SolarWatchPage />} />

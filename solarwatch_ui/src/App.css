@@ -28,7 +28,7 @@
 
 /* Add margin to create gaps */
 .NavBar > * {
-  margin-right: 2vw; /* Adjust the value as needed, using viewport width units */
+  margin-right: 0.5vw; /* Adjust the value as needed, using viewport width units */
 }
 
 /* To avoid adding margin to the last element */
@@ -40,7 +40,16 @@
   display: flex;
   justify-content: space-between; /* Updated to space between */
   align-items: center; /* Center items vertically */
-  margin-top: 2vh; /* Add margin to separate from the header, using viewport height units */
+  margin-top: 0.5vh; /* Add margin to separate from the header, using viewport height units */
+}
+
+.NavBar img{
+  width: auto;
+  height: 3vh;
+}
+
+.NavBar img:hover{
+  color:#282c34;
 }
 
 .NavBar a {
@@ -70,7 +79,7 @@
 .NavBar a:hover {
   background-color: #61dafb;
   color: #282c34;
-}
+} 
 
 .App-link {
   color: #61dafb;

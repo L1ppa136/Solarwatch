@@ -1,0 +1,17 @@
+#welcome-container{
+    max-width: 60%;
+    margin: auto;
+    margin-top: 10px;
+    padding: 10px;
+    /* background-color: #282c34; */
+    color:#282c34;
+    border: 1px solid #282c34;
+    border-radius: 5px;
+    text-align: center;
+    letter-spacing: 5px;
+}
+
+#welcome-container p{
+    max-width: 100%; /* Set your desired width */
+    margin: 0 auto;
+}
