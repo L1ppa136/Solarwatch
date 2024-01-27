@@ -79,7 +79,18 @@
 .NavBar a:hover {
   background-color: #61dafb;
   color: #282c34;
-} 
+}
+
+#home-logo-svg{
+  width: auto;
+  height: 30px;
+  fill:#61dafb
+}
+
+#home-logo-svg:hover{
+  fill:#282c34
+}
+
 
 .App-link {
   color: #61dafb;
